@@ -4,42 +4,70 @@ class ContactsController < ApplicationController
   # GET /contacts
   def index
     @contacts = Contact.all
-    json_response(@contacts)
+    json_response(generate_contacts_map)
   end
 
   # POST /contacts
   def create
-    @contact = Contact.create!(contact_params(params, true))
+    cleaned_params = strip_all(params[:contact])
+    @contact = Contact.create!(contact_params(cleaned_params))
     @change = @contact.change.create!(change_params)
     json_response(@contact, :created)
   end
 
-  # GET /contacts/:id
-  def show
-    json_response(@contact)
-  end
-
-  # POST /contacts/:id
+  # PUT /contacts/:id
   def update
-    @contact.update(contact_params(params, false))
-    @change = @contact.change.create!(change_params)
-    head :no_content
+    contact = prepare_params(params)
+    unless contact.empty?()
+      @contact.update(contact)
+      @change = @contact.change.create!(change_params)
+      return json_response({ status: "ok" })
+    end
+    json_response({ status: "error", message: "Nothing changed" })
   end
 
   # DELETE /contacts/:id
   def destroy
     @contact.destroy
-    head :no_content
+    json_response({ status: "ok" })
   end
 
-  private
+  # private methods
 
-  def contact_params(params, is_new)
+  def contact_params(params)
     params.permit(:name, :surname, :email, :tel)
   end
 
   def set_contact
     @contact = Contact.find(params[:id])
+  end
+
+  def prepare_params(params)
+    changed_fields = get_changed_fields(strip_all(params[:contact]))
+    contact_params(changed_fields)
+  end
+
+  def generate_contacts_map
+    contacts_map = {}
+    @contacts.each do |contact|
+      contacts_map[contact[:id]] = contact
+    end
+    contacts_map
+  end
+
+  def get_changed_fields(contact)
+    contact.each do |field, value|
+      if !value || value == @contact[field] || value.empty?()
+        contact.delete(field)
+      end
+    end
+    contact
+  end
+
+  def strip_all(contact)
+    contact.each do |field, value|
+      contact[field] = value.strip
+    end
   end
 
   # changes
@@ -49,4 +77,6 @@ class ContactsController < ApplicationController
     params.require(:contact_id)
     params.permit(:name, :surname, :email, :tel)
   end
+
+  private :contact_params, :set_contact, :get_changed_fields, :change_params
 end

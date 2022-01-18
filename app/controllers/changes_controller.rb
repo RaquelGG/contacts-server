@@ -1,5 +1,5 @@
 class ChangesController < ApplicationController
-  before_action :set_contact
+  before_action :set_contact, only: [:index]
 
   # GET /contacts/:contact_id/changes
   def index

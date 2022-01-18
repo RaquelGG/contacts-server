@@ -1,5 +1,5 @@
 class ContactsController < ApplicationController
-  before_action :set_contact, only: [:index, :update, :destroy]
+  before_action :set_contact, only: [:update, :destroy]
 
   # GET /contacts
   def index
@@ -11,16 +11,16 @@ class ContactsController < ApplicationController
   def create
     cleaned_params = strip_all(params[:contact])
     @contact = Contact.create!(contact_params(cleaned_params))
-    @change = @contact.change.create!(change_params)
+    @change = @contact.change.create!(contact_params(cleaned_params))
     json_response(@contact, :created)
   end
 
   # PUT /contacts/:id
   def update
-    contact = prepare_params(params)
-    unless contact.empty?()
-      @contact.update(contact)
-      @change = @contact.change.create!(change_params)
+    cleaned_params = prepare_params(params)
+    unless cleaned_params.empty?()
+      @contact.update!(cleaned_params)
+      @change = @contact.change.create!(change_params(cleaned_params))
       return json_response({ status: "ok" })
     end
     json_response({ status: "error", message: "Nothing changed" })
@@ -72,10 +72,10 @@ class ContactsController < ApplicationController
 
   # changes
 
-  def change_params
-    params[:contact_id] = @contact[:id]
-    params.require(:contact_id)
-    params.permit(:name, :surname, :email, :tel)
+  def change_params(cleaned_params)
+    cleaned_params[:contact_id] = @contact[:id]
+    cleaned_params.require(:contact_id)
+    cleaned_params.permit(:name, :surname, :email, :tel)
   end
 
   private :contact_params, :set_contact, :get_changed_fields, :change_params

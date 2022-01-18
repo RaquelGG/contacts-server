@@ -1,19 +1,35 @@
 class ChangesController < ApplicationController
   before_action :set_contact
-  before_action :set_contact_change, only: [:show]
 
   # GET /contacts/:contact_id/changes
   def index
-    json_response(@contact.change)
+    json_response(changelog_format)
   end
 
-  private
+  # private methods
 
   def set_contact
     @contact = Contact.find(params[:contact_id])
   end
 
-  def set_contact_change
-    @change = @contact.Changes.find_by!(contact: params[:contact_id]) if @contact
+  def changelog_format
+    changelog = []
+    @contact.change.order(:date).each do |change|
+      fields = [:name, :surname, :tel, :email]
+      changedFields = {}
+      fields.each do |field|
+        if change[field]
+          changedFields[field] = change[field]
+        end
+      end
+      changelog.append({
+        :id => change[:id],
+        :date => change[:date],
+        :changedFields => changedFields,
+      })
+    end
+    changelog
   end
+
+  private :set_contact, :changelog_format
 end

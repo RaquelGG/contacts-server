@@ -15,18 +15,18 @@ ActiveRecord::Schema.define(version: 2) do
   create_table "changes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "contact_id", null: false
     t.timestamp "date", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.string "name", limit: 45
-    t.string "surname", limit: 45
-    t.string "email", limit: 45
-    t.string "tel", limit: 45
+    t.string "name"
+    t.string "surname"
+    t.string "email"
+    t.string "tel"
     t.index ["contact_id"], name: "index_changes_on_contact_id"
   end
 
   create_table "contacts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "name", limit: 45, null: false
-    t.string "surname", limit: 45, null: false
-    t.string "email", limit: 45, null: false
-    t.string "tel", limit: 45, null: false
+    t.string "name", null: false
+    t.string "surname", null: false
+    t.string "email", null: false
+    t.string "tel", null: false
   end
 
   add_foreign_key "changes", "contacts"

@@ -1,12 +1,16 @@
 # Contact server
 ## Steps to run the server
 1. The server has been connected to a MySQL database.\
-you will need to have a [mysql server](https://dev.mysql.com/downloads/mysql/).\
-You can see more database details in [config/database.yml](https://github.com/RaquelGG/contacts-server/blob/main/config/database.yml).
+you will need to have a 
+[mysql server](https://dev.mysql.com/downloads/mysql/).\
+Create two databases, `contacts` and `contacts_test` with username `root` and password `ABcyKrrc4CeTy9Zz`\
+You can change database details in 
+[config/database.yml](https://github.com/RaquelGG/contacts-server/blob/main/config/database.yml).
 
+    
 1. Download this repository 
 
-2. Go to the project folder and install dependencies\
+2. Go to the project folder and install dependencies
    ```
    bundle install
    ```
@@ -34,7 +38,7 @@ You can see more database details in [config/database.yml](https://github.com/Ra
    ```
    rail server
    ```
-
+<br />
 
 ### The following tables will be created in MySQL from rails models
 

@@ -52,7 +52,7 @@ You can change database details in
 |      tel |        | email      |
 |          |        | tel        |
 
-## Additional dependecies
+## Additional dependencies
 - Readapt
 - FactoryBot
 - Faker
